@@ -1,4 +1,10 @@
 const express = require('express')
 const router = express.Router()
-router.get('/', (req, res) => res.send('123'))
+const admin = require('./modules/admin')
+const bookController = require('../controllers/book-controller')
+router.use('/admin', admin)
+
+router.get('/books', bookController.getBooks)
+
+router.use('/', (req, res) => res.redirect('/books'))
 module.exports = router
