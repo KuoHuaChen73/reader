@@ -28,7 +28,9 @@ passport.serializeUser((user, cb) => {
 
 passport.deserializeUser((id, cb) => {
   User.findByPk(id, { raw: true })
-    .then(user => cb(null, user))
+    .then(user => {
+      cb(null, user)
+    })
     .catch(err => cb(err))
 })
 module.exports = passport
