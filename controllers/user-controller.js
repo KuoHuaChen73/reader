@@ -22,6 +22,12 @@ const userController = {
       })
       .then(() => res.render('signin'))
       .catch(err => next(err))
+  },
+  signinPage: (req, res, next) => {
+    res.render('signin')
+  },
+  signin: (req, res, next) => {
+    res.redirect('/books')
   }
 }
 
