@@ -4,12 +4,13 @@ const session = require('express-session')
 const passport = require('./config/passport')
 const flash = require('connect-flash')
 const { getUser } = require('./helpers/auth-helper')
+const handlebarsHelpers = require('./helpers/handlebars-helpers')
 const routes = require('./routes')
 const app = express()
 const port = process.env.PORT || 3000
 const SESSION_SECRET = 'hero'
 const { errorHandler } = require('./middlewares/error-handler')
-app.engine('hbs', handlebars({ extname: '.hbs' }))
+app.engine('hbs', handlebars({ extname: '.hbs', helpers: handlebarsHelpers }))
 app.set('view engine', 'hbs')
 app.use(express.urlencoded({ extended: true }))
 app.use(session({
