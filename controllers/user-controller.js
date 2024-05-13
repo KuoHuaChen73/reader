@@ -28,6 +28,10 @@ const userController = {
   },
   signin: (req, res, next) => {
     res.redirect('/books')
+  },
+  logout: (req, res, next) => {
+    req.logout()
+    res.redirect('/signin')
   }
 }
 

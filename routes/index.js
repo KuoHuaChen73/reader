@@ -10,6 +10,7 @@ router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)
 router.get('/signin', userController.signinPage)
 router.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signin)
+router.get('/logout', userController.logout)
 router.get('/books', authenticated, bookController.getBooks)
 
 router.use('/', (req, res) => res.redirect('/books'))

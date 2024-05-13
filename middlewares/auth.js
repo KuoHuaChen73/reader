@@ -6,7 +6,7 @@ module.exports = {
     return res.redirect('/signin')
   },
   authenticatedAdmin: (req, res, next) => {
-    if (getUser(req).isAdmin === true) return next()
+    if (getUser(req).isAdmin) return next()
     return res.redirect('/books')
   }
 }

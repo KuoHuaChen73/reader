@@ -1,0 +1,28 @@
+<div class="form-row mb-3">
+  <label class="form-label" for="name">Name</label>
+  <input class="form-control" type="text" name="name" id="name" placeholder="Enter name" value="{{book.name}}"
+    required>
+</div>
+<div class="form-row mb-3">
+  <label class="form-label" for="categoryId">Category</label>
+  <select class="form-control" id="categoryId" name="categoryId">
+    {{#each categories}}
+    <option value="{{this.id}}" {{#ifCond this.id ../books.categoryId}} selected {{/ifCond}}>{{this.name}}</option>
+    {{/each}}
+  </select>
+</div>
+
+<div class="form-row mb-3">
+  <label class="form-label" for="tel">Author</label>
+  <input class="form-control" type="tel" name="tel" id="tel" placeholder="Enter author" value="{{books.author}}">
+</div>
+<div class="form-row mb-3">
+  <label class="form-label" for="description">Description</label>
+  <textarea class="form-control" id="description" name="description" rows="3">{{restaurant.description}}</textarea>
+  <div class="form-row mb-3">
+    <label class="form-label" for="image">Image</label>
+    <input class="form-control" type="file" class="form-control-file" id="image" name="image">
+  </div>
+</div>
+<button type="submit" class="btn btn-primary">Submit</button>
+<a class="btn btn-outline-secondary" href="javascript:history.back()">Back</a>
