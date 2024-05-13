@@ -7,6 +7,15 @@ const adminController = {
       })
       .catch(err => next(err))
   },
+  getBook: (req, res, next) => {
+    console.log('123')
+    Book.findByPk(req.params.id, { raw: true })
+      .then(book => {
+        if (!book) throw new Error("Book didn't exist")
+        res.render('admin/book', { book })
+      })
+      .catch(err => next(err))
+  },
   createBook: (req, res, next) => {
     res.render('admin/create-book')
   },
