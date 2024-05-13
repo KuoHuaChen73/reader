@@ -1,16 +1,23 @@
-const { Book } = require('../models')
+const { Book, Category } = require('../models')
 const { localFileHandler } = require('../helpers/file-helpers')
 const adminController = {
   getBooks: (req, res, next) => {
-    Book.findAll({ raw: true })
+    Book.findAll({
+      include: Category,
+      raw: true,
+      nest: true
+    })
       .then(books => {
         res.render('admin/books', { books })
       })
       .catch(err => next(err))
   },
   getBook: (req, res, next) => {
-    console.log('123')
-    Book.findByPk(req.params.id, { raw: true })
+    Book.findByPk(req.params.id, {
+      include: Category,
+      raw: true,
+      nest: true
+    })
       .then(book => {
         if (!book) throw new Error("Book didn't exist")
         res.render('admin/book', { book })
@@ -18,10 +25,13 @@ const adminController = {
       .catch(err => next(err))
   },
   createBook: (req, res, next) => {
-    res.render('admin/create-book')
+    Category.findAll({ raw: true })
+      .then(categories => {
+        res.render('admin/create-book', { categories })
+      })
   },
   postBook: (req, res, next) => {
-    const { name, author, description } = req.body
+    const { name, author, description, categoryId } = req.body
     const { file } = req
     if (!name) throw new Error('請輸入書名')
     localFileHandler(file)
@@ -30,7 +40,8 @@ const adminController = {
           name,
           author,
           description,
-          image: filePath || null
+          image: filePath || null,
+          categoryId
         })
       })
       .then(() => {
@@ -40,15 +51,18 @@ const adminController = {
       .catch(err => next(err))
   },
   editBook: (req, res, next) => {
-    Book.findByPk(req.params.id, { raw: true })
-      .then(book => {
+    Promise.all([
+      Book.findByPk(req.params.id, { raw: true }),
+      Category.findAll({ raw: true })
+    ])
+      .then(([book, categories]) => {
         if (!book) throw new Error("Book didn't exist")
-        res.render('admin/edit-book', { book })
+        res.render('admin/edit-book', { book, categories })
       })
       .catch(err => next(err))
   },
   putBook: (req, res, next) => {
-    const { name, author, description } = req.body
+    const { name, author, description, categoryId } = req.body
     const { file } = req
     Promise.all([
       Book.findByPk(req.params.id),
@@ -60,7 +74,8 @@ const adminController = {
           name,
           author,
           description,
-          image: filePath || book.image
+          image: filePath || book.image,
+          categoryId
         })
       })
       .then(book => {

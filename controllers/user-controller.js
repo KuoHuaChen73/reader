@@ -32,6 +32,13 @@ const userController = {
   logout: (req, res, next) => {
     req.logout()
     res.redirect('/signin')
+  },
+  getUsers: (req, res, next) => {
+    User.findAll({ raw: true })
+      .then(users => {
+        res.render('admin/users', { users })
+      })
+      .catch(err => next(err))
   }
 }
 
