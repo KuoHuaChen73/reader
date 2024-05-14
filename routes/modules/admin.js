@@ -17,7 +17,7 @@ router.put('/categories/:id', categoryController.putCategory)
 router.delete('/categories/:id', categoryController.deleteCategory)
 router.post('/categories', categoryController.postCategory)
 router.get('/categories', categoryController.getCategories)
-
+router.patch('/users/:id', userController.patchUser)
 router.get('/users', userController.getUsers)
 router.use('/', (req, res) => {
   res.redirect('/admin/books')

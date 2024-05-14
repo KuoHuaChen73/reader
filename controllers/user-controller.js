@@ -39,6 +39,18 @@ const userController = {
         res.render('admin/users', { users })
       })
       .catch(err => next(err))
+  },
+  patchUser: (req, res, next) => {
+    User.findByPk(req.params.id)
+      .then(user => {
+        if (!user) throw new Error("User dedn't exist")
+        if (user.email === 'root@example.com') throw new Error('不可更動此用戶')
+        return user.update({
+          isAdmin: !user.isAdmin
+        })
+      })
+      .then(() => res.redirect('/admin/users'))
+      .catch(err => next(err))
   }
 }
 
