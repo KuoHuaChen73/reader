@@ -1,4 +1,4 @@
-const { Book, Category } = require('../models')
+const { Book, Category, Comment, User } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 const bookController = {
   getBooks: (req, res, next) => {
@@ -29,6 +29,19 @@ const bookController = {
           categoryId,
           pagination: getPagination(limit, page, books.count)
         })
+      })
+      .catch(err => next(err))
+  },
+  getBook: (req, res, next) => {
+    Book.findByPk(req.params.id, {
+      include: [
+        Category,
+        { model: Comment, include: User }
+      ]
+    })
+      .then(book => {
+        if (!book) throw new Error("Book didn't exist")
+        res.render('book', { book: book.toJSON() })
       })
       .catch(err => next(err))
   }
