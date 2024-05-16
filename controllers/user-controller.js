@@ -1,5 +1,6 @@
-const { User } = require('../models')
+const { User, Comment, Book } = require('../models')
 const bcrypt = require('bcryptjs')
+const { localFileHandler } = require('../helpers/file-helpers')
 const userController = {
   signUpPage: (req, res, next) => {
     res.render('signup')
@@ -50,6 +51,52 @@ const userController = {
         })
       })
       .then(() => res.redirect('/admin/users'))
+      .catch(err => next(err))
+  },
+  getUser: (req, res, next) => {
+    User.findByPk(req.params.id, {
+      include: {
+        model: Comment,
+        include: Book
+      }
+    })
+      .then(user => {
+        if (!user) throw new Error("User didn't exist")
+        user = user.toJSON()
+        user.totalComments = user.Comments.length
+        const temp = []
+        user.Comments = user.Comments.filter(c => {
+          if (temp.some(t => t.bookId === c.bookId)) return false
+          temp.push(c)
+          return true
+        })
+        res.render('users/profile', { userProfile: user })
+      })
+      .catch(err => next(err))
+  },
+  editUser: (req, res, next) => {
+    User.findByPk(req.params.id, { raw: true })
+      .then(user => {
+        if (!user) throw new Error("User dedn't exist")
+        res.render('users/edit', { userProfile: user })
+      })
+  },
+  putUser: (req, res, next) => {
+    const { name, description } = req.body
+    const { file } = req
+    Promise.all([
+      User.findByPk(req.params.id),
+      localFileHandler(file)
+    ])
+      .then(([user, filePath]) => {
+        if (!user) throw new Error("User dedn't exist")
+        return user.update({
+          name,
+          description,
+          image: filePath || user.image
+        })
+      })
+      .then(user => res.redirect(`/users/${user.id}`))
       .catch(err => next(err))
   }
 }

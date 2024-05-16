@@ -4,6 +4,7 @@ const admin = require('./modules/admin')
 const passport = require('../config/passport')
 const { errorHandler } = require('../middlewares/error-handler')
 const { authenticated, authenticatedAdmin } = require('../middlewares/auth')
+const upload = require('../middlewares/multer')
 const bookController = require('../controllers/book-controller')
 const userController = require('../controllers/user-controller')
 const commentController = require('../controllers/comment-controller')
@@ -18,7 +19,11 @@ router.get('/books', authenticated, bookController.getBooks)
 router.use(errorHandler)
 
 router.post('/comments', authenticated, commentController.postComment)
-router.delete('/comments:id', commentController.deleteComment)
+router.delete('/comments/:id', commentController.deleteComment)
+
+router.get('/users/:id/edit', authenticated, userController.editUser)
+router.put('/users/:id', authenticated, upload.single('image'), userController.putUser)
+router.get('/users/:id', authenticated, userController.getUser)
 
 router.use('/', (req, res) => res.redirect('/books'))
 module.exports = router

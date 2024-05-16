@@ -1,0 +1,32 @@
+<div>
+  <div class="container bg-white">
+    <div class="row">
+      <div class="col-4 ps-0">
+        <img src="{{#if user.image}}{{userProfile.image}}{{else}}/upload/default-profile-picture.jpg{{/if}}"
+          class="img-thumbnail img-responsive">
+      </div>
+      <div class="col-8">
+        <h1>{{userProfile.name}}</h1>
+        <h3>{{userProfile.email}}</h3>
+        <h4>{{userProfile.description}}</h4>
+        <h4>總評論數: {{userProfile.totalComments}}</h4>
+        <a href="/users/{{userProfile.id}}/edit" class="btn btn-primary">Edit</a>
+      </div>
+    </div>
+  </div>
+  <div class="mt-5 bg-white">
+    <div class="bg-secondary">
+      <h2>已評論書籍</h2>
+    </div>
+    <div class="p-3 row justify-content-md-center">
+      {{#each userProfile.Comments}}
+      <div class="m-1 col-2">
+        <a href="/books/{{this.Book.id}}">
+          <img src="{{this.Book.image}}" class="img-responsive" style="width: 100%">
+        </a>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
+</div>
