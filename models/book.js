@@ -17,6 +17,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'bookId',
         as: 'favoritedUsers'
       })
+      Book.belongsToMany(models.User, {
+        through: models.Like,
+        foreignKey: 'bookId',
+        as: 'LikedUsers'
+      })
     }
   }
   Book.init({

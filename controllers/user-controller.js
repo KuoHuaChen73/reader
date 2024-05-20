@@ -1,4 +1,4 @@
-const { User, Comment, Book, Favorite } = require('../models')
+const { User, Comment, Book, Favorite, Like } = require('../models')
 const bcrypt = require('bcryptjs')
 const { localFileHandler } = require('../helpers/file-helpers')
 const userController = {
@@ -134,10 +134,55 @@ const userController = {
     ])
       .then(([book, favorite]) => {
         if (!book) throw new Error("Book didn't exist")
-        if (!favorite) throw new Error("You haven't favorite this book")
+        if (!favorite) throw new Error("You haven't favorited this book")
         return favorite.destroy()
       })
       .then(() => res.redirect('back'))
+      .catch(err => next(err))
+  },
+  addLike: (req, res, next) => {
+    const bookId = req.params.id
+    Promise.all([
+      Book.findByPk(bookId),
+      Like.findOne({
+        where: {
+          bookId,
+          userId: req.user.id
+        }
+      })
+    ])
+      .then(([book, like]) => {
+        if (!book) throw new Error("Book didn't exist")
+        if (like) throw new Error('You have liked this book')
+        return Like.create({
+          userId: req.user.id,
+          bookId
+        })
+      })
+      .then(() => {
+        res.redirect('back')
+      })
+      .catch(err => next(err))
+  },
+  removeLike: (req, res, next) => {
+    const bookId = req.params.id
+    Promise.all([
+      Book.findByPk(bookId),
+      Like.findOne({
+        where: {
+          bookId,
+          userId: req.user.id
+        }
+      })
+    ])
+      .then(([book, like]) => {
+        if (!book) throw new Error("Book didn't exist")
+        if (!like) throw new Error("You haven't liked this book")
+        return like.destroy()
+      })
+      .then(() => {
+        res.redirect('back')
+      })
       .catch(err => next(err))
   }
 }

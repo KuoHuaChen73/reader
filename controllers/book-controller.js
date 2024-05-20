@@ -1,4 +1,4 @@
-const { Book, Category, Comment, User } = require('../models')
+const { Book, Category, Comment, User, Like } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 const bookController = {
   getBooks: (req, res, next) => {
@@ -18,11 +18,13 @@ const bookController = {
       Category.findAll({ raw: true })
     ])
       .then(([books, categories]) => {
-        const favoritedBooksId = req.user.FavoritedBooks.map(b => b.id)
+        const favoritedBooksId = req.user.FavoritedBooks.map(f => f.id)
+        const likedBooksId = req.user.LikedBooks.map(l => l.id)
         const data = books.rows.map(b => ({
           ...b,
           description: b.description.substring(0, 30),
-          isFavorited: favoritedBooksId.includes(b.id)
+          isFavorited: favoritedBooksId.includes(b.id),
+          isLiked: likedBooksId.includes(b.id)
         })
         )
         res.render('books', {
@@ -48,11 +50,13 @@ const bookController = {
     })
       .then(book => {
         if (!book) throw new Error("Book didn't exist")
-        const favoritedBooksId = req.user.FavoritedBooks.map(b => b.id)
+        const favoritedBooksId = req.user.FavoritedBooks.map(f => f.id)
+        const likedBooksId = req.user.LikedBooks.map(l => l.id)
         book = book.toJSON()
         res.render('book', {
           book,
-          isFavorited: favoritedBooksId.includes(book.id)
+          isFavorited: favoritedBooksId.includes(book.id),
+          isLiked: likedBooksId.includes(book.id)
         })
       })
       .catch(err => next(err))

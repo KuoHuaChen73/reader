@@ -28,5 +28,8 @@ router.get('/users/:id', authenticated, userController.getUser)
 router.post('/favorite/:id', authenticated, userController.addFavorite)
 router.delete('/favorite/:id', authenticated, userController.removeFavorite)
 
+router.post('/like/:id', authenticated, userController.addLike)
+router.delete('/like/:id', authenticated, userController.removeLike)
+
 router.use('/', (req, res) => res.redirect('/books'))
 module.exports = router
