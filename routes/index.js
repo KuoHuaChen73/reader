@@ -25,5 +25,8 @@ router.get('/users/:id/edit', authenticated, userController.editUser)
 router.put('/users/:id', authenticated, upload.single('image'), userController.putUser)
 router.get('/users/:id', authenticated, userController.getUser)
 
+router.post('/favorite/:id', authenticated, userController.addFavorite)
+router.delete('/favorite/:id', authenticated, userController.removeFavorite)
+
 router.use('/', (req, res) => res.redirect('/books'))
 module.exports = router

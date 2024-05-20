@@ -1,4 +1,4 @@
-const { User, Comment, Book } = require('../models')
+const { User, Comment, Book, Favorite } = require('../models')
 const bcrypt = require('bcryptjs')
 const { localFileHandler } = require('../helpers/file-helpers')
 const userController = {
@@ -97,6 +97,47 @@ const userController = {
         })
       })
       .then(user => res.redirect(`/users/${user.id}`))
+      .catch(err => next(err))
+  },
+  addFavorite: (req, res, next) => {
+    const bookId = req.params.id
+    Promise.all([
+      Book.findByPk(bookId),
+      Favorite.findOne({
+        where: {
+          bookId,
+          userId: req.user.id
+        }
+      })
+    ])
+      .then(([book, favorite]) => {
+        if (!book) throw new Error("Book didn't exist")
+        if (favorite) throw new Error('You have already favorited this book')
+        return Favorite.create({
+          userId: req.user.id,
+          bookId
+        })
+      })
+      .then(() => res.redirect('back'))
+      .catch(err => next(err))
+  },
+  removeFavorite: (req, res, next) => {
+    const bookId = req.params.id
+    Promise.all([
+      Book.findByPk(bookId),
+      Favorite.findOne({
+        where: {
+          bookId,
+          userId: req.user.id
+        }
+      })
+    ])
+      .then(([book, favorite]) => {
+        if (!book) throw new Error("Book didn't exist")
+        if (!favorite) throw new Error("You haven't favorite this book")
+        return favorite.destroy()
+      })
+      .then(() => res.redirect('back'))
       .catch(err => next(err))
   }
 }

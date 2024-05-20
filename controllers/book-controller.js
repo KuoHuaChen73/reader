@@ -18,9 +18,11 @@ const bookController = {
       Category.findAll({ raw: true })
     ])
       .then(([books, categories]) => {
+        const favoritedBooksId = req.user.FavoritedBooks.map(b => b.id)
         const data = books.rows.map(b => ({
           ...b,
-          description: b.description.substring(0, 30)
+          description: b.description.substring(0, 30),
+          isFavorited: favoritedBooksId.includes(b.id)
         })
         )
         res.render('books', {
@@ -36,12 +38,22 @@ const bookController = {
     Book.findByPk(req.params.id, {
       include: [
         Category,
-        { model: Comment, include: User }
+        {
+          model: Comment,
+          separate: true,
+          order: [['createdAt', 'DESC']],
+          include: User
+        }
       ]
     })
       .then(book => {
         if (!book) throw new Error("Book didn't exist")
-        res.render('book', { book: book.toJSON() })
+        const favoritedBooksId = req.user.FavoritedBooks.map(b => b.id)
+        book = book.toJSON()
+        res.render('book', {
+          book,
+          isFavorited: favoritedBooksId.includes(book.id)
+        })
       })
       .catch(err => next(err))
   }
