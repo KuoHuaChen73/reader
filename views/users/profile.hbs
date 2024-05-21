@@ -5,12 +5,15 @@
         <img src="{{#if user.image}}{{userProfile.image}}{{else}}/upload/default-profile-picture.jpg{{/if}}"
           class="img-thumbnail img-responsive">
       </div>
-      <div class="col-8">
+      <div class="col-4">
         <h1>{{userProfile.name}}</h1>
         <h3>{{userProfile.email}}</h3>
         <h4>{{userProfile.description}}</h4>
         <h4>總評論數: {{userProfile.totalComments}}</h4>
         <a href="/users/{{userProfile.id}}/edit" class="btn btn-primary">Edit</a>
+      </div>
+      <div class="col-4">
+        <a href="/users/{{userProfile.id}}/experiences" class="btn btn-primary">讀書心得</a>
       </div>
     </div>
   </div>

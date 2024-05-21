@@ -5,6 +5,8 @@ module.exports = {
     } else {
       req.flash('error_messages', `${err}`)
     }
+    // if (err.message === "You don't have permission") return res.redirect('/')
+    console.log('123')
     res.redirect('back')
     next(err)
   }

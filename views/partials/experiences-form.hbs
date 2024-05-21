@@ -1,0 +1,15 @@
+<div class="form-row mb-3">
+  <label class="form-label" for="bookId">Book</label>
+  <select class="form-control" id="bookId" name="bookId">
+    {{#each books}}
+    <option value="{{this.id}}" {{#ifCond this.id ../experience.bookId}} selected {{/ifCond}}>{{this.name}}</option>
+    {{/each}}
+  </select>
+</div>
+
+<div class="form-row mb-3">
+  <label class="form-label" for="description">experience</label>
+  <textarea class="form-control" id="text" name="text" rows="3">{{experience.text}}</textarea>
+</div>
+<button type="submit" class="btn btn-primary">Submit</button>
+<a class="btn btn-outline-secondary" href="javascript:history.back()">Back</a>

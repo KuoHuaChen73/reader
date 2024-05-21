@@ -1,4 +1,4 @@
-const { User, Comment, Book, Favorite, Like } = require('../models')
+const { User, Comment, Book, Favorite, Like, Experience, Category } = require('../models')
 const bcrypt = require('bcryptjs')
 const { localFileHandler } = require('../helpers/file-helpers')
 const userController = {
@@ -182,6 +182,116 @@ const userController = {
       })
       .then(() => {
         res.redirect('back')
+      })
+      .catch(err => next(err))
+  },
+  getExperiences: (req, res, next) => {
+    Experience.findAll({
+      where: { userId: req.params.id },
+      include: {
+        model: Book,
+        include: Category
+      },
+      order: [['createdAt', 'DESC']]
+    })
+      .then(experiences => {
+        experiences = experiences.map(e => ({
+          ...e.toJSON(),
+          text: e.text.substring(0, 50),
+          isHimself: e.userId === req.user.id
+        }))
+        console.log(experiences)
+        res.render('users/experiences', { experiences })
+      })
+      .catch(err => next(err))
+  },
+  getExperience: (req, res, next) => {
+    Experience.findByPk(req.params.id, {
+      include: {
+        model: Book,
+        include: Category
+      },
+      raw: true,
+      nest: true
+    })
+      .then(experience => {
+        if (!experience) throw new Error("Experience didn't exist")
+        const isHimself = experience.userId === req.user.id
+        res.render('users/experience', { experience, isHimself })
+      })
+      .catch(err => next(err))
+  },
+  createExperience: (req, res, next) => {
+    Book.findAll({ raw: true })
+      .then(books => {
+        req.flash('success_messages', '建立成功')
+        res.render('users/create-experience', { books })
+      })
+      .catch(err => next(err))
+  },
+  postExperience: (req, res, next) => {
+    const { bookId, text } = req.body
+    Promise.all([
+      Book.findByPk(bookId),
+      Experience.findOne({ where: { bookId, userId: req.user.id } })
+    ])
+      .then(([book, experience]) => {
+        if (!book) throw new Error("Book didn't exist")
+        if (experience) throw new Error('You have create experience of this book')
+        return Experience.create({
+          text,
+          bookId,
+          userId: req.user.id
+        })
+      })
+      .then(experience => res.redirect(`/users/${experience.userId}/experiences`))
+      .catch(err => {
+        next(err)
+      })
+  },
+  editExperience: (req, res, next) => {
+    Promise.all([
+      Experience.findByPk(req.params.id, {
+        include: Book,
+        raw: true,
+        nest: true
+      }),
+      Book.findAll({ raw: true })
+    ])
+      .then(([experience, books]) => {
+        if (!experience) throw new Error("Experience didn't exist")
+        if (experience.userId !== req.user.id) throw new Error("You don't have permission")
+        res.render('users/edit-experience', { experience, books })
+      })
+      .catch(err => next(err))
+  },
+  putExperience: (req, res, next) => {
+    const { bookId, text } = req.body
+    Experience.findByPk(req.params.id)
+      .then(experience => {
+        if (!experience) throw new Error("Experience didn't exist")
+        if (req.user.id !== experience.userId) throw new Error("You don't have permission")
+        return experience.update({
+          bookId,
+          text
+        })
+      })
+      .then(experience => {
+        req.flash('success_messages', '修改成功:)')
+        res.redirect(`/experiences/${experience.id}`)
+      })
+      .catch(err => next(err))
+  },
+  deleteExperience: (req, res, next) => {
+    Experience.findByPk(req.params.id)
+      .then(experience => {
+        if (!experience) throw new Error("Experience didn't exist")
+        if (!req.user.isAdmin || req.user.id !== experience.userId) throw new Error("You don't have permission")
+        return experience.destroy()
+      })
+      .then(experience => {
+        req.flash('success_messages', '刪除成功:)')
+        res.redirect(`/users/${experience.userId}/experiences`)
       })
       .catch(err => next(err))
   }
