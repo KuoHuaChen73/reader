@@ -1,4 +1,4 @@
-const { User, Comment, Book, Favorite, Like, Experience, Category } = require('../models')
+const { User, Comment, Book, Favorite, Like, Experience, Category, State, StatedBook } = require('../models')
 const bcrypt = require('bcryptjs')
 const { localFileHandler } = require('../helpers/file-helpers')
 const userController = {
@@ -54,13 +54,31 @@ const userController = {
       .catch(err => next(err))
   },
   getUser: (req, res, next) => {
-    User.findByPk(req.params.id, {
-      include: {
-        model: Comment,
-        include: Book
-      }
-    })
-      .then(user => {
+    Promise.all([
+      User.findByPk(req.params.id, {
+        include: [{
+          model: Comment,
+          include: Book
+        },
+        {
+          model: Book,
+          as: 'StatedBooks'
+        }
+        ]
+      }),
+      StatedBook.findAll({
+        where: {
+          userId: req.user.id
+        },
+        include: Book,
+        raw: true,
+        nest: true,
+        attributes: ['id', 'stateId', 'userId', 'bookId', 'createdAt', 'updatedAt']
+      }),
+      Book.findAll({ raw: true })
+    ])
+
+      .then(([user, statedBooks, books]) => {
         if (!user) throw new Error("User didn't exist")
         user = user.toJSON()
         user.totalComments = user.Comments.length
@@ -70,7 +88,9 @@ const userController = {
           temp.push(c)
           return true
         })
-        res.render('users/profile', { userProfile: user })
+        // console.log(user)
+        // console.log('StatedBook:', statedBooks)
+        res.render('users/profile', { userProfile: user, books, statedBooks })
       })
       .catch(err => next(err))
   },
@@ -293,6 +313,44 @@ const userController = {
         req.flash('success_messages', '刪除成功:)')
         res.redirect(`/users/${experience.userId}/experiences`)
       })
+      .catch(err => next(err))
+  },
+  postStatedBook: (req, res, next) => {
+    const { bookId } = req.body
+    const stateId = req.params.id
+    Promise.all([
+      State.findByPk(req.params.id),
+      Book.findByPk(bookId),
+      StatedBook.findOne({
+        where: {
+          userId: req.user.id,
+          bookId
+        }
+      })
+    ])
+      .then(([state, book, statedBook]) => {
+        if (!state) throw new Error("State didn't exist")
+        if (!book) throw new Error("Book didn't exist")
+        if (statedBook) throw new Error('You already stated this book')
+        return StatedBook.create({
+          userId: req.user.id,
+          bookId,
+          stateId
+        })
+      })
+      .then(() => res.redirect('back'))
+      .catch(err => next(err))
+  },
+  deleteStatedBook: (req, res, next) => {
+    StatedBook.findOne({
+      where: { id: req.params.id }
+    })
+      .then(statedBook => {
+        if (!statedBook) throw new Error("StatedBook didn't exist")
+        if (statedBook.userId !== req.user.id) throw new Error("You don't have permission")
+        return statedBook.destroy()
+      })
+      .then(() => res.redirect('back'))
       .catch(err => next(err))
   }
 }

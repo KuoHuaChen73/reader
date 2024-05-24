@@ -38,6 +38,9 @@ router.get('/experiences/:id', authenticated, userController.getExperience)
 router.delete('/experiences/:id', authenticated, userController.deleteExperience)
 router.post('/experiences', authenticated, userController.postExperience)
 
+router.post('/state/:id', authenticated, userController.postStatedBook)
+router.delete('/state/:id', authenticated, userController.deleteStatedBook)
+
 router.use('/', (req, res) => res.redirect('/books'))
 router.use(errorHandler)
 module.exports = router

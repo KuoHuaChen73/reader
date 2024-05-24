@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       Book.belongsToMany(models.User, {
         through: models.Favorite,
         foreignKey: 'bookId',
-        as: 'favoritedUsers'
+        as: 'FavoritedUsers'
       })
       Book.belongsToMany(models.User, {
         through: models.Like,
@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         as: 'LikedUsers'
       })
       Book.hasMany(models.Experience, { foreignKey: 'bookId' })
+      Book.belongsToMany(models.User, {
+        through: models.StatedBook,
+        foreignKey: 'bookId',
+        as: 'StatedUsers'
+      })
+      Book.hasMany(models.StatedBook, { foreignKey: 'bookId' })
     }
   }
   Book.init({
