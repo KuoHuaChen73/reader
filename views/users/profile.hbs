@@ -1,5 +1,5 @@
 <div>
-  <div class="container bg-white">
+  <div class="card shadow-sm bg-white p-3">
     <div class="row">
       <div class="col-4 ps-0">
         <img src="{{#if user.image}}{{userProfile.image}}{{else}}/upload/default-profile-picture.jpg{{/if}}"
@@ -17,7 +17,8 @@
       </div>
     </div>
   </div>
-  <div class="mt-5 bg-white">
+  {{#if isHimself}}
+  <div class="card shadow-sm mt-5 bg-white">
     <div class="p-3 row justify-content-md-center">
       <div class="col-4">
         <h2>Not yet</h2>
@@ -99,19 +100,20 @@
       </div>
     </div>
   </div>
-  <div class="mt-5 bg-white">
+  {{/if}}
+  <div class="mt-5 bg-white card mb-4 shadow-sm">
     <div class="bg-secondary">
-      <h2>已評論書籍</h2>
+      <h2>近期評論書籍</h2>
     </div>
-    <div class="p-3 row justify-content-md-center">
+
+    <table class="table align-middle">
       {{#each userProfile.Comments}}
-      <div class="m-1 col-2">
-        <a href="/books/{{this.Book.id}}">
-          <img src="{{this.Book.image}}" class="img-responsive" style="width: 100%">
-        </a>
-      </div>
+      <tr>
+        <td><a href="/books/{{this.Book.id}}">{{this.Book.name}}</a></td>
+        <td>{{this.text}}</td>
+      </tr>
       {{/each}}
-    </div>
+    </table>
   </div>
 </div>
 </div>

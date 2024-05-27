@@ -54,10 +54,13 @@ const userController = {
       .catch(err => next(err))
   },
   getUser: (req, res, next) => {
+    const userId = Number(req.params.id)
     Promise.all([
       User.findByPk(req.params.id, {
         include: [{
           model: Comment,
+          order: [['createdAt', 'DESC']],
+          separate: true,
           include: Book
         },
         {
@@ -68,7 +71,7 @@ const userController = {
       }),
       StatedBook.findAll({
         where: {
-          userId: req.user.id
+          userId
         },
         include: Book,
         raw: true,
@@ -77,20 +80,17 @@ const userController = {
       }),
       Book.findAll({ raw: true })
     ])
-
       .then(([user, statedBooks, books]) => {
         if (!user) throw new Error("User didn't exist")
         user = user.toJSON()
         user.totalComments = user.Comments.length
-        const temp = []
-        user.Comments = user.Comments.filter(c => {
-          if (temp.some(t => t.bookId === c.bookId)) return false
-          temp.push(c)
-          return true
-        })
-        // console.log(user)
-        // console.log('StatedBook:', statedBooks)
-        res.render('users/profile', { userProfile: user, books, statedBooks })
+        user.Comments = user.Comments.slice(0, 5).map(c => ({
+          ...c,
+          text: c.text.substring(0, 50)
+        }))
+        let isHimself = false
+        if (req.user.id === userId) isHimself = true
+        res.render('users/profile', { userProfile: user, books, statedBooks, isHimself })
       })
       .catch(err => next(err))
   },

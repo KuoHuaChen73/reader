@@ -60,6 +60,26 @@ const bookController = {
         })
       })
       .catch(err => next(err))
+  },
+  getTopBooks: (req, res, next) => {
+    Book.findAll({
+      include: {
+        model: User,
+        as: 'FavoritedUsers'
+      }
+    })
+      .then(books => {
+        const booksId = req.user.FavoritedBooks.map(fb => fb.id)
+        const result = books.map(b => ({
+          ...b.toJSON(),
+          description: b.description && b.description.substring(0, 50),
+          favoritedCount: b.FavoritedUsers.length,
+          isFavorited: booksId.includes(b.id)
+        }))
+          .sort((a, b) => b.favoritedCount - a.favoritedCount)
+          .splice(0, 10)
+        res.render('top-books', { books: result })
+      })
   }
 }
 

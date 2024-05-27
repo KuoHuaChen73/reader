@@ -14,6 +14,8 @@ router.post('/signup', userController.signUp)
 router.get('/signin', userController.signinPage)
 router.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signin)
 router.get('/logout', userController.logout)
+
+router.get('/books/top', authenticated, bookController.getTopBooks)
 router.get('/books/:id', authenticated, bookController.getBook)
 router.get('/books', authenticated, bookController.getBooks)
 
