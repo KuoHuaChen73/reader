@@ -45,18 +45,36 @@ const bookController = {
           separate: true,
           order: [['createdAt', 'DESC']],
           include: User
+        },
+        {
+          model: User,
+          as: 'FavoritedUsers'
+        },
+        {
+          model: User,
+          as: 'LikedUsers'
         }
       ]
     })
       .then(book => {
         if (!book) throw new Error("Book didn't exist")
+
+        return book.increment('viewCounts', { by: 1 })
+      })
+      .then(book => {
         const favoritedBooksId = req.user.FavoritedBooks.map(f => f.id)
         const likedBooksId = req.user.LikedBooks.map(l => l.id)
         book = book.toJSON()
+        book.Comments = book.Comments.map(c => ({
+          ...c,
+          text: c.text.substring(0, 50)
+        }))
         res.render('book', {
           book,
           isFavorited: favoritedBooksId.includes(book.id),
-          isLiked: likedBooksId.includes(book.id)
+          isLiked: likedBooksId.includes(book.id),
+          favoriteCount: book.FavoritedUsers.length,
+          likeCount: book.LikedUsers.length
         })
       })
       .catch(err => next(err))

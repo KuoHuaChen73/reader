@@ -2,7 +2,7 @@
   <div class="card shadow-sm bg-white p-3">
     <div class="row">
       <div class="col-4 ps-0">
-        <img src="{{#if user.image}}{{userProfile.image}}{{else}}/upload/default-profile-picture.jpg{{/if}}"
+        <img src="{{userProfile.image}}"
           class="img-thumbnail img-responsive">
       </div>
       <div class="col-4">
@@ -10,7 +10,7 @@
         <h3>{{userProfile.email}}</h3>
         <h4>{{userProfile.description}}</h4>
         <h4>總評論數: {{userProfile.totalComments}}</h4>
-        <a href="/users/{{userProfile.id}}/edit" class="btn btn-primary">Edit</a>
+        <a href="/users/{{userProfile.id}}/edit" class="btn btn-primary">編輯</a>
       </div>
       <div class="col-4">
         <a href="/users/{{userProfile.id}}/experiences" class="btn btn-primary">讀書心得</a>
@@ -19,20 +19,24 @@
   </div>
   {{#if isHimself}}
   <div class="card shadow-sm mt-5 bg-white">
+    <div class="bg-secondary">
+      <h2>最近在看</h2>
+    </div>
     <div class="p-3 row justify-content-md-center">
+      {{#each states}}
       <div class="col-4">
-        <h2>Not yet</h2>
-        <form action="/state/1" method="POST">
+        <h2>{{this.name}}</h2>
+        <form action="/state/{{this.id}}" method="POST">
           <select name="bookId" id="">
-            {{#each books}}
+            {{#each ../books}}
             <option value="{{this.id}}">{{this.name}}</option>
             {{/each}}
           </select>
-          <button class="btn btn-primary" type="submit">Add</button>
+          <button class="btn btn-primary" type="submit">+</button>
         </form>
         <table class="table align-middle">
-          {{#each statedBooks}}
-          {{#ifCond this.stateId 1}}
+          {{#each ../statedBooks}}
+          {{#ifCond this.stateId ../this.id}}
           <tr>
             <th>{{this.Book.name}}</th>
             <td>
@@ -45,59 +49,7 @@
           {{/each}}
         </table>
       </div>
-
-      <div class="col-4">
-        <h2>Reading</h2>
-        <form action="/state/2" method="POST">
-          <select name="bookId" id="">
-            {{#each books}}
-            <option value="{{this.id}}">{{this.name}}</option>
-            {{/each}}
-          </select>
-          <button class="btn btn-primary" type="submit">Add</button>
-        </form>
-        <table class="table align-middle">
-          {{#each statedBooks}}
-          {{#ifCond this.stateId 2}}
-          <tr>
-            <th>{{this.Book.name}}</th>
-            <td>
-              <form action="/state/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-danger">X</button>
-              </form>
-            </td>
-          </tr>
-          {{/ifCond}}
-          {{/each}}
-        </table>
-      </div>
-
-      <div class="col-4">
-        <h2>Finished</h2>
-        <form action="/state/3" method="POST">
-          <select name="bookId" id="">
-            {{#each books}}
-            <option value="{{this.id}}">{{this.name}}</option>
-            {{/each}}
-          </select>
-          <button class="btn btn-primary" type="submit">Add</button>
-        </form>
-        <table class="table align-middle"> 
-          {{#each statedBooks}}
-          {{#ifCond this.stateId 3}}
-          <tr>
-            <th>{{this.Book.name}}</th>
-            <td>
-              <form action="/state/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-danger">X</button>
-              </form>
-            </td>
-          </tr>
-          {{/ifCond}}
-          {{/each}}
-        </table>
-          
-      </div>
+      {{/each}}
     </div>
   </div>
   {{/if}}

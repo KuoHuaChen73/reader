@@ -69,6 +69,7 @@ const userController = {
         }
         ]
       }),
+      State.findAll({ raw: true }),
       StatedBook.findAll({
         where: {
           userId
@@ -80,7 +81,7 @@ const userController = {
       }),
       Book.findAll({ raw: true })
     ])
-      .then(([user, statedBooks, books]) => {
+      .then(([user, states, statedBooks, books]) => {
         if (!user) throw new Error("User didn't exist")
         user = user.toJSON()
         user.totalComments = user.Comments.length
@@ -90,7 +91,7 @@ const userController = {
         }))
         let isHimself = false
         if (req.user.id === userId) isHimself = true
-        res.render('users/profile', { userProfile: user, books, statedBooks, isHimself })
+        res.render('users/profile', { userProfile: user, books, states, statedBooks, isHimself })
       })
       .catch(err => next(err))
   },
@@ -318,8 +319,9 @@ const userController = {
   postStatedBook: (req, res, next) => {
     const { bookId } = req.body
     const stateId = req.params.id
+    console.log(stateId)
     Promise.all([
-      State.findByPk(req.params.id),
+      State.findByPk(stateId),
       Book.findByPk(bookId),
       StatedBook.findOne({
         where: {

@@ -9,7 +9,7 @@
     <br>
     <div class="well">
       <ul class="list-unstyled">
-        <li><strong>Author:</strong> {{experience.Book.author}}</li>
+        <li><strong>作者:</strong> {{experience.Book.author}}</li>
       </ul>
     </div>
   </div>
@@ -18,19 +18,19 @@
     <p style="white-space: break-spaces;">{{experience.text}}</p>
     {{#if isHimself}}
     <div class="d-flex">
-      <a href="/experiences/{{experience.id}}/edit" class="btn btn-primary m-1">Edit</a>
+      <a href="/experiences/{{experience.id}}/edit" class="btn btn-primary m-1">編輯</a>
       <form action="/experiences/{{experience.id}}?_method=DELETE" method="POST">
-        <button class="btn btn-danger m-1">Delete</button>
+        <button class="btn btn-danger m-1">刪除</button>
       </form>
     </div>
     {{else}}
       {{#if user.isAdmin}}
       <form action="/experiences/{{this.id}}?_method=DELETE" method="POST">
-        <button class="btn btn-danger m-1">Delete</button>
+        <button class="btn btn-danger m-1">刪除</button>
       </form>
       {{/if}}
     {{/if}}
   </div>
   <hr>
 </div>
-<a class="btn btn-outline-secondary" href="/users/{{experience.userId}}/experiences">Back</a>
+<a class="btn btn-outline-secondary" href="/users/{{experience.userId}}/experiences">返回</a>

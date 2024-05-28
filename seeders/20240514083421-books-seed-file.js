@@ -7,7 +7,7 @@ module.exports = {
       type: queryInterface.sequelize.QueryTypes.SELECT
     })
     await queryInterface.bulkInsert('Books',
-      Array.from({ length: 30 }).map(() => {
+      Array.from({ length: 50 }).map(() => {
         return {
           name: faker.name.findName(),
           author: faker.name.findName(),

@@ -9,31 +9,44 @@
     <br>
     <div class="well">
       <ul class="list-unstyled">
-        <li><strong>Author:</strong> {{book.author}}</li>
+        <li><strong>作者:</strong> {{book.author}}</li>
       </ul>
     </div>
   </div>
-  <div class="col-md-8">
+  <div class="col-md-8 d-flex flex-column">
     <p style="white-space: break-spaces;">{{book.description}}</p>
-    <a class="btn btn-outline-primary" href="/book/{{book.id}}/dashboard">Dashboard</a>
-    {{#if isFavorited }}
-    <form action="/favorite/{{book.id}}?_method=DELETE" method="POST" style="display: contents;">
-      <button type="submit" class="btn btn-danger">移除最愛</button>
-    </form>
-    {{else}}
-    <form action="/favorite/{{book.id}}" method="POST" style="display: contents;">
-      <button type="submit" class="btn btn-primary">加到最愛</button>
-    </form>
-    {{/if}}
-    {{#if isLiked}}
-    <form action="/like/{{book.id}}?_method=DELETE" method="POST" style="display: contents;">
-      <button type="submit" class="btn btn-danger m-1">Unlike</button>
-    </form>
-    {{else}}
-    <form action="/like/{{book.id}}" method="POST" style="display: contents;">
-      <button type="submit" class="btn btn-primary m-1">Like</button>
-    </form>
-    {{/if}}
+    <div class="mt-auto d-flex">
+      <div>
+        {{#if isFavorited }}
+        <form action="/favorite/{{book.id}}?_method=DELETE" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-danger">取消收藏</button>
+        </form>
+        {{else}}
+        <form action="/favorite/{{book.id}}" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-primary">收藏</button>
+        </form>
+        {{/if}}
+        {{#if isLiked}}
+        <form action="/like/{{book.id}}?_method=DELETE" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-danger m-1">Unlike</button>
+        </form>
+        {{else}}
+        <form action="/like/{{book.id}}" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-primary m-1">Like</button>
+        </form>
+        {{/if}}
+      </div>
+      
+      <div class="ms-auto">
+        <ul>
+          <li>收藏: {{favoriteCount}}</li>
+          <li>喜歡: {{likeCount}}</li>
+          <li>瀏覽次數: {{book.viewCounts}}</li>
+        </ul>
+      </div>
+      
+    </div>
+    
   </div>
   <hr>
 </div>
@@ -44,7 +57,7 @@
 {{#each book.Comments}}
 {{#if ../user.isAdmin}}
 <form action="/comments/{{this.id}}?_method=DELETE" method="POST" class="float-end">
-  <button type="submit" class="btn btn-danger">Delete</button>
+  <button type="submit" class="btn btn-danger">X</button>
 </form>
 {{/if}}
 
@@ -52,7 +65,7 @@
   <div class="row">
     <div class="col-2">
       <a href="/users/{{this.User.id}}">
-        <img src="{{this.User.image}}" class="img-responsive" style="width: 100%;">
+        <img src="{{this.User.image}}" class="img-fluid" style="width: 100%;">
       </a>
     </div>
     <div class="col">
@@ -73,6 +86,6 @@
     <textarea class="form-control" id="text" name="text" rows="3"></textarea>
   </div>
   <input type="hidden" name="bookId" value="{{book.id}}" />
-  <button type="submit" class="btn btn-primary">Submit</button>
-  <a class="btn btn-outline-secondary" href="javascript:history.back()">Back</a>
+  <button type="submit" class="btn btn-primary">送出</button>
+  <a class="btn btn-outline-secondary" href="javascript:history.back()">返回</a>
 </form>

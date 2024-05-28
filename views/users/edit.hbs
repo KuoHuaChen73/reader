@@ -1,18 +1,18 @@
 <form action="/users/{{user.id}}?_method=PUT" enctype="multipart/form-data" method="post">
   <div class="form-row mb-3">
-    <label class="form-label" for="name">Name</label>
+    <label class="form-label" for="name">使用者名稱</label>
     <input class="form-control" type="text" name="name" id="name" placeholder="Enter name" value="{{userProfile.name}}"
       required>
   </div>
   <div class="form-row mb-3">
-    <label class="form-label" for="image">Image</label>
+    <label class="form-label" for="image">圖像</label>
     <input class="form-control" type="file" class="form-control-file" id="image" name="image">
   </div>
   <div class="form-row mb-3">
-    <label class="form-label" for="description">Description</label>
-    <textarea class="form-control" id="description" name="description" rows="3">{{book.description}}</textarea>
+    <label class="form-label" for="description">簡介</label>
+    <textarea class="form-control" id="description" name="description" rows="3">{{userProfile.description}}</textarea>
   </div>
   
-  <button class="btn btn-primary" type="submit">Submit</button>
-  <a class="btn btn-outline-secondary" href="javascript:history.back()">Back</a>
+  <button class="btn btn-primary" type="submit">送出</button>
+  <a class="btn btn-outline-secondary" href="javascript:history.back()">返回</a>
 </form>
