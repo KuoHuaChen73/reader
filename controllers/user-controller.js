@@ -221,7 +221,6 @@ const userController = {
           text: e.text.substring(0, 50),
           isHimself: e.userId === req.user.id
         }))
-        console.log(experiences)
         res.render('users/experiences', { experiences })
       })
       .catch(err => next(err))
@@ -319,7 +318,6 @@ const userController = {
   postStatedBook: (req, res, next) => {
     const { bookId } = req.body
     const stateId = req.params.id
-    console.log(stateId)
     Promise.all([
       State.findByPk(stateId),
       Book.findByPk(bookId),
