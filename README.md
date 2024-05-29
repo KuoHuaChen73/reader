@@ -9,6 +9,11 @@ Book information sharing forum 書籍資訊分享論壇
 - 個人頁面: 查看此人近期留言、紀錄最近在看的書 *Personal page: View this person’s recent messages and record the books they have recently read.*
 - 後臺功能: 可以管理書籍、使用者、書籍分類  *Backend functions: Can manage books, users, and book categories*
 
+
+
+## ERD
+![image](https://github.com/KuoHuaChen73/reader/blob/main/reader-ERD.png)
+
 ## How to use
 1. Fork this project
 2. git clone
