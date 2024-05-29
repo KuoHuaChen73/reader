@@ -1,5 +1,9 @@
 <h1>讀書心得</h1>
-<a href="/experiences/create" class="btn btn-primary">建立心得</a>
+{{#if isHimself}}
+<div class="m-2">
+  <a href="/experiences/create" class="btn btn-primary">建立心得</a>
+</div>
+{{/if}}
 
 <div class="row mt-3">
   {{#each experiences}}
@@ -19,7 +23,7 @@
         <p class="card-text text-truncate">{{this.text}}</p>
         <div class="d-flex">
           <a href="/experiences/{{this.id}}" class="btn btn-primary m-1">Show</a>
-          {{#if this.isHimself}}
+          {{#if ../isHimself}}
           <a href="/experiences/{{this.id}}/edit" class="btn btn-primary m-1">編輯</a>
           <form action="/experiences/{{this.id}}?_method=DELETE" method="POST">
             <button class="btn btn-danger m-1">刪除</button>

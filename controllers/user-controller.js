@@ -207,8 +207,9 @@ const userController = {
       .catch(err => next(err))
   },
   getExperiences: (req, res, next) => {
+    const userId = Number(req.params.id)
     Experience.findAll({
-      where: { userId: req.params.id },
+      where: { userId },
       include: {
         model: Book,
         include: Category
@@ -218,10 +219,10 @@ const userController = {
       .then(experiences => {
         experiences = experiences.map(e => ({
           ...e.toJSON(),
-          text: e.text.substring(0, 50),
-          isHimself: e.userId === req.user.id
+          text: e.text.substring(0, 50)
         }))
-        res.render('users/experiences', { experiences })
+        const isHimself = userId === req.user.id
+        res.render('users/experiences', { experiences, isHimself })
       })
       .catch(err => next(err))
   },
