@@ -110,7 +110,8 @@ const userController = {
       localFileHandler(file)
     ])
       .then(([user, filePath]) => {
-        if (!user) throw new Error("User dedn't exist")
+        if (!user) throw new Error("User didn't exist")
+        if (user.id !== req.user.id) throw new Error("You don't have permission")
         return user.update({
           name,
           description,
@@ -245,7 +246,6 @@ const userController = {
   createExperience: (req, res, next) => {
     Book.findAll({ raw: true })
       .then(books => {
-        req.flash('success_messages', '建立成功')
         res.render('users/create-experience', { books })
       })
       .catch(err => next(err))
@@ -265,7 +265,10 @@ const userController = {
           userId: req.user.id
         })
       })
-      .then(experience => res.redirect(`/users/${experience.userId}/experiences`))
+      .then(experience => {
+        req.flash('success_messages', '建立成功')
+        res.redirect(`/users/${experience.userId}/experiences`)
+      })
       .catch(err => {
         next(err)
       })
