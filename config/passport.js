@@ -8,17 +8,16 @@ passport.use(new LocalStrategy(
     passwordField: 'password',
     passReqToCallback: true
   },
-  (req, email, password, cb) => {
-    User.findOne({ where: { email } })
-      .then(user => {
-        if (!user) return cb(null, false, req.flash('error_messages', '帳號或密碼錯誤'))
-        bcrypt.compare(password, user.password)
-          .then(result => {
-            if (!result) return cb(null, false, req.flash('error_messages', '帳號或密碼錯誤'))
-            return cb(null, user)
-          })
-      })
-      .catch(err => cb(err))
+  async (req, email, password, cb) => {
+    try {
+      const user = await User.findOne({ where: { email } })
+      if (!user) return cb(null, false, req.flash('error_messages', '帳號或密碼錯誤'))
+      const result = bcrypt.compare(password, user.password)
+      if (!result) return cb(null, false, req.flash('error_messages', '帳號或密碼錯誤'))
+      return cb(null, user)
+    } catch (err) {
+      cb(err)
+    }
   }
 ))
 
